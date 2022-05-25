@@ -124,11 +124,11 @@ public class StringToEnumIdConverter
             case ("natural"):
                 return 0;
             case ("place"):
-                return 0;
-            case ("boundary"):
                 return 1;
-            case ("admin_level"):
+            case ("boundary"):
                 return 2;
+            case ("admin_level"):
+                return 3;
             case ("name"):
                 return 4;
             case ("highway"):
