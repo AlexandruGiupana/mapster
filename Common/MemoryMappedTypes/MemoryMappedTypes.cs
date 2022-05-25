@@ -145,8 +145,6 @@ public class StringToEnumIdConverter
                 return 10;
             case ("amenity"):
                 return 11;
-            case ("waterway"):
-                return 12;
             default:
                 return -1;
         }
