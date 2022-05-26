@@ -111,7 +111,7 @@ public static class Program
                     Id = way.Id,
                     Coordinates = (totalCoordinateCount, new List<Coordinate>()),
                     PropertyKeys = (totalPropertyCount, new List<PropertyKeysEnum>(way.Tags.Count)),
-                    PropertyValues = (totalPropertyCount, new List<string>(way.Tags.Count))
+                    PropertyValues = (totalPropertyCount, new List<PropertyValuesEnum>(way.Tags.Count))
                 };
 
                 featureIds.Add(way.Id);
@@ -124,8 +124,8 @@ public static class Program
                     {
                         labels[^1] = totalPropertyCount * 2 + featureData.PropertyKeys.keys.Count * 2 + 1;
                     }
-                    featureData.PropertyKeys.keys.Add((PropertyKeysEnum)StringToEnumIdConverter.getEnumId(tag.Key));
-                    featureData.PropertyValues.values.Add(tag.Value);
+                    featureData.PropertyKeys.keys.Add((PropertyKeysEnum)StringToEnumIdConverter.getEnumIdKeys(tag.Key));
+                    featureData.PropertyValues.values.Add((PropertyValuesEnum)StringToEnumIdConverter.getEnumIdValues(tag.Value));
                 }
 
                 foreach (var nodeId in way.NodeIds)
@@ -135,10 +135,10 @@ public static class Program
 
                     foreach (var (key, value) in node.Tags)
                     {
-                        if (!featureData.PropertyKeys.keys.Contains((PropertyKeysEnum)StringToEnumIdConverter.getEnumId(key)))
+                        if (!featureData.PropertyKeys.keys.Contains((PropertyKeysEnum)StringToEnumIdConverter.getEnumIdKeys(key)))
                         {
-                            featureData.PropertyKeys.keys.Add((PropertyKeysEnum)StringToEnumIdConverter.getEnumId(key));
-                            featureData.PropertyValues.values.Add(value);
+                            featureData.PropertyKeys.keys.Add((PropertyKeysEnum)StringToEnumIdConverter.getEnumIdKeys(key));
+                            featureData.PropertyValues.values.Add((PropertyValuesEnum)StringToEnumIdConverter.getEnumIdValues(value));
                         }
                     }
 
@@ -167,7 +167,7 @@ public static class Program
                 featureIds.Add(nodeId);
 
                 var featurePropKeys = new List<PropertyKeysEnum>();
-                var featurePropValues = new List<string>();
+                var featurePropValues = new List<PropertyValuesEnum>();
 
                 labels.Add(-1);
                 for (var i = 0; i < node.Tags.Count; ++i)
@@ -178,8 +178,8 @@ public static class Program
                         labels[^1] = totalPropertyCount * 2 + featurePropKeys.Count * 2 + 1;
                     }
 
-                    featurePropKeys.Add((PropertyKeysEnum)StringToEnumIdConverter.getEnumId(tag.Key));
-                    featurePropValues.Add(tag.Value);
+                    featurePropKeys.Add((PropertyKeysEnum)StringToEnumIdConverter.getEnumIdKeys(tag.Key));
+                    featurePropValues.Add((PropertyValuesEnum)StringToEnumIdConverter.getEnumIdValues(tag.Value));
                 }
 
                 if (featurePropKeys.Count != featurePropValues.Count)
@@ -275,15 +275,15 @@ public static class Program
                 for (var i = 0; i < featureData.PropertyKeys.keys.Count; ++i)
                 {
                     PropertyKeysEnum k = featureData.PropertyKeys.keys[i];
-                    ReadOnlySpan<char> v = featureData.PropertyValues.values[i];
+                    PropertyValuesEnum v = featureData.PropertyValues.values[i];
 
                     fileWriter.Write(stringOffset); // StringEntry: Offset
                     fileWriter.Write(k.ToString().Length); // StringEntry: Length
                     stringOffset += k.ToString().Length;
 
                     fileWriter.Write(stringOffset); // StringEntry: Offset
-                    fileWriter.Write(v.Length); // StringEntry: Length
-                    stringOffset += v.Length;
+                    fileWriter.Write(v.ToString().Length); // StringEntry: Length
+                    stringOffset += v.ToString().Length;
                 }
             }
 
@@ -306,8 +306,8 @@ public static class Program
                         fileWriter.Write((short)c);
                     }
 
-                    ReadOnlySpan<char> v = featureData.PropertyValues.values[i];
-                    foreach (var c in v)
+                    PropertyValuesEnum v = featureData.PropertyValues.values[i];
+                    foreach (var c in v.ToString())
                     {
                         fileWriter.Write((short)c);
                     }
@@ -364,6 +364,6 @@ public static class Program
         public byte GeometryType { get; set; }
         public (int offset, List<Coordinate> coordinates) Coordinates { get; init; }
         public (int offset, List<PropertyKeysEnum> keys) PropertyKeys { get; init; }
-        public (int offset, List<string> values) PropertyValues { get; init; }
+        public (int offset, List<PropertyValuesEnum> values) PropertyValues { get; init; }
     }
 }

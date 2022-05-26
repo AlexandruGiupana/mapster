@@ -26,7 +26,7 @@ public readonly ref struct MapFeatureData
     public GeometryType Type { get; init; }
     public ReadOnlySpan<char> Label { get; init; }
     public ReadOnlySpan<Coordinate> Coordinates { get; init; }
-    public Dictionary<PropertyKeysEnum, string> Properties { get; init; }
+    public Dictionary<PropertyKeysEnum, PropertyValuesEnum> Properties { get; init; }
 }
 
 /// <summary>
@@ -183,13 +183,13 @@ public unsafe class DataFile : IDisposable
 
                 if (isFeatureInBBox)
                 {
-                    var properties = new Dictionary<PropertyKeysEnum, string>(feature->PropertyCount);
+                    var properties = new Dictionary<PropertyKeysEnum, PropertyValuesEnum>(feature->PropertyCount);
                     for (var p = 0; p < feature->PropertyCount; ++p)
                     {
                         GetProperty(header.Tile.Value.StringsOffsetInBytes, header.Tile.Value.CharactersOffsetInBytes, p * 2 + feature->PropertiesOffset, out var key, out var value);
-                        if (StringToEnumIdConverter.getEnumId(key.ToString()) != -1)
+                        if (StringToEnumIdConverter.getEnumIdKeys(key.ToString()) != -1)
                         {
-                            properties.Add((PropertyKeysEnum)StringToEnumIdConverter.getEnumId(key.ToString()), value.ToString());
+                            properties.Add((PropertyKeysEnum)StringToEnumIdConverter.getEnumIdKeys(key.ToString()), (PropertyValuesEnum)StringToEnumIdConverter.getEnumIdValues(value.ToString()));
                         }
                     }
 

@@ -112,32 +112,23 @@ public struct GeoFeature : BaseShape
         Type = GeoFeatureType.Unknown;
         if (naturalKey != null)
         {
-            if (naturalKey == "fell" ||
-                naturalKey == "grassland" ||
-                naturalKey == "heath" ||
-                naturalKey == "moor" ||
-                naturalKey == "scrub" ||
-                naturalKey == "wetland")
+            if ((int)naturalKey == 0)
             {
                 Type = GeoFeatureType.Plain;
             }
-            else if (naturalKey == "wood" ||
-                     naturalKey == "tree_row")
+            else if ((int) naturalKey == 1)
             {
                 Type = GeoFeatureType.Forest;
             }
-            else if (naturalKey == "bare_rock" ||
-                     naturalKey == "rock" ||
-                     naturalKey == "scree")
+            else if ((int) naturalKey == 2)
             {
                 Type = GeoFeatureType.Mountains;
             }
-            else if (naturalKey == "beach" ||
-                     naturalKey == "sand")
+            else if ((int) naturalKey == 3)
             {
                 Type = GeoFeatureType.Desert;
             }
-            else if (naturalKey == "water")
+            else if ((int) naturalKey == 4)
             {
                 Type = GeoFeatureType.Water;
             }
@@ -211,7 +202,7 @@ public struct PopulatedPlace : BaseShape
         }
         else
         {
-            Name = string.IsNullOrWhiteSpace(name) ? feature.Label.ToString() : name;
+            Name = feature.Label.ToString();
             ShouldRender = true;
         }
     }
@@ -226,8 +217,7 @@ public struct PopulatedPlace : BaseShape
         foreach (var entry in feature.Properties)
             if (entry.Key == PropertyKeysEnum.Place)
             {
-                if (entry.Value.StartsWith("city") || entry.Value.StartsWith("town") ||
-                    entry.Value.StartsWith("locality") || entry.Value.StartsWith("hamlet"))
+                if ((int) entry.Value == 5)
                 {
                     return true;
                 }
@@ -264,11 +254,11 @@ public struct Border : BaseShape
         var foundLevel = false;
         foreach (var entry in feature.Properties)
         {
-            if (entry.Key == PropertyKeysEnum.Boundary && entry.Value.StartsWith("administrative"))
+            if (entry.Key == PropertyKeysEnum.Boundary && (int) entry.Value == 4)
             {
                 foundBoundary = true;
             }
-            if (entry.Key == PropertyKeysEnum.Admin_level && entry.Value == "2")
+            if (entry.Key == PropertyKeysEnum.Admin_level && (int) entry.Value == 13)
             {
                 foundLevel = true;
             }
